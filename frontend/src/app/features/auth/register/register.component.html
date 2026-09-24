@@ -1,0 +1,33 @@
+<div class="tma-auth-container">
+  <mat-card class="tma-card tma-auth-card">
+    <h1>TalentMind AI</h1>
+    <h2>Create account</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full name</mat-label>
+        <input matInput formControlName="fullName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" />
+      </mat-form-field>
+
+      @if (errorMessage()) {
+        <p class="error">{{ errorMessage() }}</p>
+      }
+
+      <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="form.invalid">
+        Register
+      </button>
+    </form>
+
+    <p>Already have an account? <a routerLink="/login">Login</a></p>
+  </mat-card>
+</div>

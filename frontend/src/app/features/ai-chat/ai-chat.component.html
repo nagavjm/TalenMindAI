@@ -1,0 +1,38 @@
+<tma-nav-shell>
+  <div class="tma-page-container">
+    <h1>AI Chat Assistant</h1>
+
+    <mat-card class="tma-card chat-card">
+      <div class="messages">
+        @for (m of messages(); track $index) {
+          <div class="message" [class.user]="m.role === 'user'" [class.assistant]="m.role === 'assistant'">
+            <p>{{ m.text }}</p>
+            @if (m.role === 'assistant' && m.chatHistoryId) {
+              <div class="feedback">
+                <button mat-icon-button (click)="feedback(m.chatHistoryId, true)" aria-label="Helpful">
+                  <mat-icon>thumb_up</mat-icon>
+                </button>
+                <button mat-icon-button (click)="feedback(m.chatHistoryId, false)" aria-label="Not helpful">
+                  <mat-icon>thumb_down</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        }
+        @if (sending()) {
+          <p class="typing">Assistant is typing...</p>
+        }
+      </div>
+
+      <div class="chat-input">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ask a question about candidates...</mat-label>
+          <input matInput [(ngModel)]="question" (keyup.enter)="send()" />
+        </mat-form-field>
+        <button mat-flat-button color="primary" [disabled]="sending()" (click)="send()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+  </div>
+</tma-nav-shell>

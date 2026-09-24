@@ -1,0 +1,22 @@
+<tma-nav-shell>
+  <div class="tma-page-container">
+    <h1>Resume Upload</h1>
+
+    <mat-card class="tma-card upload-card">
+      <p>Supported formats: PDF, DOCX, JPG, PNG</p>
+      <input type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" (change)="onFileSelected($event)" />
+
+      @if (errorMessage()) {
+        <p class="error">{{ errorMessage() }}</p>
+      }
+
+      <button mat-flat-button color="primary" [disabled]="!selectedFile() || uploading()" (click)="upload()">
+        @if (uploading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Upload Resume
+        }
+      </button>
+    </mat-card>
+  </div>
+</tma-nav-shell>

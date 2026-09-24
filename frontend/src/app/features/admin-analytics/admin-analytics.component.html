@@ -1,0 +1,46 @@
+<tma-nav-shell>
+  <div class="tma-page-container">
+    <h1>Admin Analytics</h1>
+
+    @if (stats(); as s) {
+      <div class="panels-grid">
+        <mat-card class="tma-card">
+          <h3>Total Resumes Processed</h3>
+          <p class="big-number">{{ s.totalResumes }}</p>
+        </mat-card>
+
+        <mat-card class="tma-card">
+          <h3>Top Skills</h3>
+          <table mat-table [dataSource]="s.topSkills" class="full-width-table">
+            <ng-container matColumnDef="skill">
+              <th mat-header-cell *matHeaderCellDef>Skill</th>
+              <td mat-cell *matCellDef="let row">{{ row.skill }}</td>
+            </ng-container>
+            <ng-container matColumnDef="count">
+              <th mat-header-cell *matHeaderCellDef>Count</th>
+              <td mat-cell *matCellDef="let row">{{ row.count }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-card>
+
+        <mat-card class="tma-card">
+          <h3>Experience Distribution</h3>
+          @for (bucket of s.experienceDistribution; track bucket.range) {
+            <div class="row"><span>{{ bucket.range }}</span><span>{{ bucket.count }}</span></div>
+          }
+        </mat-card>
+
+        <mat-card class="tma-card">
+          <h3>Most Popular Technologies</h3>
+          @for (tech of s.mostPopularTechnologies; track tech.skill) {
+            <div class="row"><span>{{ tech.skill }}</span><span>{{ tech.count }}</span></div>
+          }
+        </mat-card>
+      </div>
+    } @else {
+      <p>Loading analytics...</p>
+    }
+  </div>
+</tma-nav-shell>

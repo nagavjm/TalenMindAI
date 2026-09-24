@@ -1,0 +1,45 @@
+<tma-nav-shell>
+  <div class="tma-page-container">
+    <h1>Resume Analysis</h1>
+
+    @if (loading()) {
+      <p>Analyzing resume...</p>
+    } @else if (analysis(); as a) {
+      <mat-card class="tma-card">
+        <h3>Candidate Summary</h3>
+        <p>{{ a.candidateSummary }}</p>
+
+        <h3>Technical Skills</h3>
+        <mat-chip-set>
+          @for (skill of a.technicalSkills; track skill) {
+            <mat-chip>{{ skill }}</mat-chip>
+          }
+        </mat-chip-set>
+
+        <h3>Certifications</h3>
+        <mat-chip-set>
+          @for (cert of a.certifications; track cert) {
+            <mat-chip>{{ cert }}</mat-chip>
+          }
+        </mat-chip-set>
+
+        <h3>Years of Experience</h3>
+        <p>{{ a.yearsOfExperience }}</p>
+
+        <h3>Strengths</h3>
+        <ul>
+          @for (s of a.strengths; track s) { <li>{{ s }}</li> }
+        </ul>
+
+        <h3>Suggested Roles</h3>
+        <ul>
+          @for (r of a.suggestedRoles; track r) { <li>{{ r }}</li> }
+        </ul>
+
+        <button mat-flat-button color="primary" (click)="viewCandidate()">View Candidate Details</button>
+      </mat-card>
+    } @else {
+      <p>No analysis available.</p>
+    }
+  </div>
+</tma-nav-shell>

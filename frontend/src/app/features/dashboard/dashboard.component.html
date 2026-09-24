@@ -1,0 +1,42 @@
+<tma-nav-shell>
+  <div class="tma-page-container">
+    <h1>Dashboard</h1>
+
+    @if (stats(); as s) {
+      <div class="stats-grid">
+        <mat-card class="tma-card stat-card">
+          <mat-icon>description</mat-icon>
+          <div>
+            <div class="stat-value">{{ s.totalResumes }}</div>
+            <div class="stat-label">Total Resumes</div>
+          </div>
+        </mat-card>
+      </div>
+
+      <div class="panels-grid">
+        <mat-card class="tma-card">
+          <h3>Top Skills</h3>
+          @for (skill of s.topSkills; track skill.skill) {
+            <div class="row"><span>{{ skill.skill }}</span><span>{{ skill.count }}</span></div>
+          }
+        </mat-card>
+
+        <mat-card class="tma-card">
+          <h3>Experience Distribution</h3>
+          @for (bucket of s.experienceDistribution; track bucket.range) {
+            <div class="row"><span>{{ bucket.range }}</span><span>{{ bucket.count }}</span></div>
+          }
+        </mat-card>
+
+        <mat-card class="tma-card">
+          <h3>Most Popular Technologies</h3>
+          @for (tech of s.mostPopularTechnologies; track tech.skill) {
+            <div class="row"><span>{{ tech.skill }}</span><span>{{ tech.count }}</span></div>
+          }
+        </mat-card>
+      </div>
+    } @else {
+      <p>Loading dashboard...</p>
+    }
+  </div>
+</tma-nav-shell>

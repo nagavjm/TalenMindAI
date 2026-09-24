@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/backend/src/TalentMindAI.API/TalentMindAI.API.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "backend: run API",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/backend/src/TalentMindAI.API/TalentMindAI.API.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "talentmind"
+      }
+    },
+    {
+      "label": "frontend: npm install",
+      "type": "shell",
+      "command": "npm install",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "group": "talentmind"
+      }
+    },
+    {
+      "label": "frontend: ng serve",
+      "type": "shell",
+      "command": "npm start",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": {
+          "regexp": "^\\b\\B$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*(Compiling|Generating browser application bundles).*",
+          "endsPattern": ".*(Application bundle generation complete|Compiled successfully|Watch mode enabled).*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "talentmind"
+      }
+    },
+    {
+      "label": "run: frontend + backend",
+      "dependsOn": [
+        "backend: run API",
+        "frontend: ng serve"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

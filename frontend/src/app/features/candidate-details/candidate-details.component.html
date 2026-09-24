@@ -1,0 +1,31 @@
+<tma-nav-shell>
+  <div class="tma-page-container">
+    @if (candidate(); as c) {
+      <h1>{{ c.candidateName }}</h1>
+      <p>File: {{ c.fileName }} | Status: {{ c.status }}</p>
+
+      <mat-tab-group>
+        <mat-tab label="Analysis">
+          @if (c.analysis; as a) {
+            <p>{{ a.candidateSummary }}</p>
+          } @else {
+            <p>No analysis available yet.</p>
+          }
+        </mat-tab>
+
+        <mat-tab label="Interview Questions">
+          <button mat-flat-button color="primary" [disabled]="generatingQuestions()" (click)="generateQuestions()">
+            Generate Interview Questions
+          </button>
+
+          @for (q of interviewQuestions(); track q.question) {
+            <mat-card class="tma-card question-card">
+              <strong>[{{ q.difficulty }}] {{ q.skill }}</strong>
+              <p>{{ q.question }}</p>
+            </mat-card>
+          }
+        </mat-tab>
+      </mat-tab-group>
+    }
+  </div>
+</tma-nav-shell>

@@ -1,0 +1,6 @@
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card { display: flex; align-items: center; gap: 16px; padding: 16px; }
+.stat-value { font-size: 2rem; font-weight: 600; color: var(--tma-primary); }
+.stat-label { color: #666; }
+.panels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }

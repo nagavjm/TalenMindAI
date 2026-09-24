@@ -1,0 +1,27 @@
+html, body { height: 100%; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+  --tma-primary: #0078d4; // Azure blue
+  --tma-primary-dark: #005a9e;
+  --tma-accent: #50e6ff;
+  --tma-bg-light: #f5f7fa;
+  --tma-bg-dark: #0f1b2b;
+  --tma-surface-dark: #16233a;
+  --tma-text-dark: #e8eef7;
+}
+
+body.dark-theme {
+  background-color: var(--tma-bg-dark);
+  color: var(--tma-text-dark);
+}
+
+.tma-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.tma-page-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}

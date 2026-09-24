@@ -1,0 +1,7 @@
+.tma-toolbar { position: sticky; top: 0; z-index: 10; }
+.spacer { flex: 1 1 auto; }
+.user-name { margin-right: 12px; font-size: 0.9rem; }
+.tma-sidenav-container { height: calc(100vh - 64px); }
+.tma-sidenav { width: 240px; }
+.tma-content { background: var(--tma-bg-light); }
+.active-link { background: rgba(0, 120, 212, 0.1); }

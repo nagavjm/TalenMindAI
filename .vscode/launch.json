@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: .NET API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/backend/src/TalentMindAI.API/bin/Debug/net9.0/TalentMindAI.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/backend/src/TalentMindAI.API",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Frontend: ng serve",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "preLaunchTask": "frontend: ng serve"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Full Stack (Backend + Frontend)",
+      "configurations": [
+        "Backend: .NET API",
+        "Frontend: ng serve"
+      ],
+      "stopAll": true
+    }
+  ]
+}
