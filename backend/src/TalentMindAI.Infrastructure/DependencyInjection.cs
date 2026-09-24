@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.Configure<AiFoundryOptions>(configuration.GetSection(AiFoundryOptions.SectionName));
         services.Configure<AiSearchOptions>(configuration.GetSection(AiSearchOptions.SectionName));
         services.Configure<AiLanguageOptions>(configuration.GetSection(AiLanguageOptions.SectionName));
+        services.Configure<FeatureFlagsOptions>(configuration.GetSection(FeatureFlagsOptions.SectionName));
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IBlobStorageService, BlobStorageService>();

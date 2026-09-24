@@ -1,22 +1,43 @@
-<tma-nav-shell>
-  <div class="tma-page-container">
-    <h1>Resume Upload</h1>
+<tma-nav-shell [showSidenav]="false">
+  <div class="upload-page">
+    <div class="upload-card">
+      <div
+        class="dropzone"
+        [class.drag-over]="isDragOver()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <div class="dropzone-icon"><mat-icon>upload</mat-icon></div>
+        <h2 class="dropzone-title">Drag &amp; drop any file here</h2>
+        <p class="dropzone-subtitle">
+          or <a class="browse-link" (click)="browseFile(fileInput)">browse file</a> from device
+        </p>
 
-    <mat-card class="tma-card upload-card">
-      <p>Supported formats: PDF, DOCX, JPG, PNG</p>
-      <input type="file" accept=".pdf,.docx,.jpg,.jpeg,.png" (change)="onFileSelected($event)" />
+        @if (selectedFile(); as file) {
+          <p class="selected-file">{{ file.name }}</p>
+        }
+
+        <input
+          #fileInput
+          type="file"
+          class="hidden-input"
+          accept=".pdf,.docx,.jpg,.jpeg,.png"
+          (change)="onFileSelected($event)"
+        />
+      </div>
 
       @if (errorMessage()) {
         <p class="error">{{ errorMessage() }}</p>
       }
 
-      <button mat-flat-button color="primary" [disabled]="!selectedFile() || uploading()" (click)="upload()">
+      <button class="upload-btn" [disabled]="!selectedFile() || uploading()" (click)="upload()">
         @if (uploading()) {
           <mat-spinner diameter="20"></mat-spinner>
         } @else {
-          Upload Resume
+          Upload
         }
       </button>
-    </mat-card>
+    </div>
   </div>
 </tma-nav-shell>

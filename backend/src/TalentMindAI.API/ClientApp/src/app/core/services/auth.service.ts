@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
+import { AuthConfig, AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
 
 // The JWT itself lives only in a HttpOnly cookie set by the API (not accessible to JS).
 // We keep a small, non-sensitive copy of the user's profile in localStorage purely so the
@@ -14,7 +14,15 @@ export class AuthService {
   private readonly baseUrl = `${environment.apiBaseUrl}/auth`;
   readonly currentUser = signal<AuthResponse | null>(this.loadUser());
 
+  // Feature-flag driven auth config (Basic vs. SSO), fetched from the API so it can be
+  // toggled server-side (appsettings) without requiring a frontend rebuild/redeploy.
+  readonly authConfig = signal<AuthConfig>({ authMode: 'Basic' });
+
   constructor(private http: HttpClient) {}
+
+  loadAuthConfig(): Observable<AuthConfig> {
+    return this.http.get<AuthConfig>(`${this.baseUrl}/config`).pipe(tap((config) => this.authConfig.set(config)));
+  }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http

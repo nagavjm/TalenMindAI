@@ -26,15 +26,24 @@ public class InterviewService : IInterviewService
             ? new List<string>()
             : JsonSerializer.Deserialize<List<string>>(resume.Analysis.TechnicalSkillsJson) ?? new();
 
-        const string systemPrompt = "You are a technical interviewer. Generate interview questions for the given skills, categorized as Beginner, Intermediate, and Advanced. Return JSON array of {question, difficulty, skill}.";
+        const string systemPrompt = """
+            You are a technical interviewer. Generate interview questions for the given skills,
+            categorized as Beginner, Intermediate, and Advanced. Respond with ONLY a single raw JSON
+            object (no markdown, no commentary) in exactly this shape:
+            { "questions": [ { "question": "string", "difficulty": "string", "skill": "string" } ] }
+            """;
         var userPrompt = $"Skills: {string.Join(", ", skills)}";
 
-        var rawResponse = await _aiFoundry.CompleteAsync(systemPrompt, userPrompt, ct);
+        var rawResponse = await _aiFoundry.CompleteAsync(systemPrompt, userPrompt, jsonMode: true, ct);
 
         List<InterviewQuestionDto> questions;
         try
         {
-            questions = JsonSerializer.Deserialize<List<InterviewQuestionDto>>(rawResponse) ?? new();
+            var wrapper = JsonSerializer.Deserialize<InterviewQuestionsWrapper>(rawResponse, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            questions = wrapper?.Questions ?? new List<InterviewQuestionDto>();
         }
         catch (JsonException)
         {
@@ -42,5 +51,10 @@ public class InterviewService : IInterviewService
         }
 
         return new InterviewQuestionResponse(resume.Id, questions);
+    }
+
+    private sealed class InterviewQuestionsWrapper
+    {
+        public List<InterviewQuestionDto>? Questions { get; set; }
     }
 }

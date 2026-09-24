@@ -38,7 +38,7 @@ public class ChatService : IChatService
         const string systemPrompt = "You are a grounded RAG assistant for a resume intelligence platform. Only answer using the provided context. If the answer is not in the context, say you don't know.";
         var userPrompt = $"Context:\n{context}\n\nQuestion: {request.Question}";
 
-        var answer = await _aiFoundry.CompleteAsync(systemPrompt, userPrompt, ct);
+        var answer = await _aiFoundry.CompleteAsync(systemPrompt, userPrompt, jsonMode: false, ct);
 
         await _promptLog.LogAsync(userId, "Chat", request.Question, answer, containedPii: false, failedSafety: false, injectionDetected: false, latencyMs: 0, ct);
 

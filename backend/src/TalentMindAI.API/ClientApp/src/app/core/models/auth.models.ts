@@ -16,3 +16,9 @@ export interface AuthResponse {
   email: string;
   role: 'User' | 'Admin';
 }
+
+export type AuthMode = 'Basic' | 'Sso';
+
+export interface AuthConfig {
+  authMode: AuthMode;
+}

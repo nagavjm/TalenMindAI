@@ -13,7 +13,7 @@ public interface IOcrService
 
 public interface IAiFoundryService
 {
-    Task<string> CompleteAsync(string systemPrompt, string userPrompt, CancellationToken ct = default);
+    Task<string> CompleteAsync(string systemPrompt, string userPrompt, bool jsonMode = false, CancellationToken ct = default);
 }
 
 public interface ISearchIndexService

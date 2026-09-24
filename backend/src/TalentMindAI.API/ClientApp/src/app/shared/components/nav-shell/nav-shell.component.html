@@ -11,26 +11,28 @@
 </mat-toolbar>
 
 <mat-sidenav-container class="tma-sidenav-container">
-  <mat-sidenav mode="side" opened class="tma-sidenav">
-    <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>dashboard</mat-icon>Dashboard
-      </a>
-      <a mat-list-item routerLink="/resume-upload" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>upload_file</mat-icon>Resume Upload
-      </a>
-      <a mat-list-item routerLink="/chat" routerLinkActive="active-link">
-        <mat-icon matListItemIcon>chat</mat-icon>AI Chat Assistant
-      </a>
-      @if (authService.isAdmin()) {
-        <a mat-list-item routerLink="/admin-analytics" routerLinkActive="active-link">
-          <mat-icon matListItemIcon>analytics</mat-icon>Admin Analytics
+  @if (showSidenav) {
+    <mat-sidenav mode="side" opened class="tma-sidenav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>dashboard</mat-icon>Dashboard
         </a>
-      }
-    </mat-nav-list>
-  </mat-sidenav>
+        <a mat-list-item routerLink="/resume-upload" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>upload_file</mat-icon>Resume Upload
+        </a>
+        <a mat-list-item routerLink="/chat" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>chat</mat-icon>AI Chat Assistant
+        </a>
+        @if (authService.isAdmin()) {
+          <a mat-list-item routerLink="/admin-analytics" routerLinkActive="active-link">
+            <mat-icon matListItemIcon>analytics</mat-icon>Admin Analytics
+          </a>
+        }
+      </mat-nav-list>
+    </mat-sidenav>
+  }
 
-  <mat-sidenav-content class="tma-content">
+  <mat-sidenav-content class="tma-content" [class.no-sidenav]="!showSidenav">
     <ng-content></ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>

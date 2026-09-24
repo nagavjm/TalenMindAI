@@ -1,39 +1,70 @@
-<tma-nav-shell>
+<tma-nav-shell [showSidenav]="false">
   <div class="tma-page-container">
-    <h1>Dashboard</h1>
+    <h1 class="dashboard-heading">Your <span class="highlight">hiring insights</span>, at a glance.</h1>
+
+    <div class="nav-cards-grid">
+      <a class="nav-card" routerLink="/resume-upload">
+        <div class="feature-icon nav-icon"><mat-icon>upload_file</mat-icon></div>
+        <h3 class="feature-title">Resume Upload</h3>
+        <p class="feature-desc">Upload and process new candidate resumes.</p>
+      </a>
+
+      <a class="nav-card" routerLink="/chat">
+        <div class="feature-icon nav-icon"><mat-icon>chat</mat-icon></div>
+        <h3 class="feature-title">AI Chat Assistant</h3>
+        <p class="feature-desc">Ask questions and get insights from your candidate pool.</p>
+      </a>
+
+      @if (authService.isAdmin()) {
+        <a class="nav-card" routerLink="/admin-analytics">
+          <div class="feature-icon nav-icon"><mat-icon>analytics</mat-icon></div>
+          <h3 class="feature-title">Admin Analytics</h3>
+          <p class="feature-desc">View platform-wide usage and performance analytics.</p>
+        </a>
+      }
+    </div>
 
     @if (stats(); as s) {
-      <div class="stats-grid">
-        <mat-card class="tma-card stat-card">
-          <mat-icon>description</mat-icon>
-          <div>
-            <div class="stat-value">{{ s.totalResumes }}</div>
-            <div class="stat-label">Total Resumes</div>
+      <div class="feature-cards-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><mat-icon>description</mat-icon></div>
+          <div class="feature-value">{{ s.totalResumes }}</div>
+          <h3 class="feature-title">Total Resumes</h3>
+          <p class="feature-desc">All resumes uploaded and processed by the platform so far.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon"><mat-icon>auto_awesome</mat-icon></div>
+          <h3 class="feature-title">Top Skills</h3>
+          <p class="feature-desc">The most in-demand skills across every candidate profile.</p>
+          <div class="feature-list">
+            @for (skill of s.topSkills; track skill.skill) {
+              <div class="row"><span>{{ skill.skill }}</span><span class="badge">{{ skill.count }}</span></div>
+            }
           </div>
-        </mat-card>
-      </div>
+        </div>
 
-      <div class="panels-grid">
-        <mat-card class="tma-card">
-          <h3>Top Skills</h3>
-          @for (skill of s.topSkills; track skill.skill) {
-            <div class="row"><span>{{ skill.skill }}</span><span>{{ skill.count }}</span></div>
-          }
-        </mat-card>
+        <div class="feature-card">
+          <div class="feature-icon"><mat-icon>trending_up</mat-icon></div>
+          <h3 class="feature-title">Experience Distribution</h3>
+          <p class="feature-desc">A breakdown of candidates by years of professional experience.</p>
+          <div class="feature-list">
+            @for (bucket of s.experienceDistribution; track bucket.range) {
+              <div class="row"><span>{{ bucket.range }}</span><span class="badge">{{ bucket.count }}</span></div>
+            }
+          </div>
+        </div>
 
-        <mat-card class="tma-card">
-          <h3>Experience Distribution</h3>
-          @for (bucket of s.experienceDistribution; track bucket.range) {
-            <div class="row"><span>{{ bucket.range }}</span><span>{{ bucket.count }}</span></div>
-          }
-        </mat-card>
-
-        <mat-card class="tma-card">
-          <h3>Most Popular Technologies</h3>
-          @for (tech of s.mostPopularTechnologies; track tech.skill) {
-            <div class="row"><span>{{ tech.skill }}</span><span>{{ tech.count }}</span></div>
-          }
-        </mat-card>
+        <div class="feature-card">
+          <div class="feature-icon"><mat-icon>bolt</mat-icon></div>
+          <h3 class="feature-title">Most Popular Technologies</h3>
+          <p class="feature-desc">Trending tools and technologies found across resumes.</p>
+          <div class="feature-list">
+            @for (tech of s.mostPopularTechnologies; track tech.skill) {
+              <div class="row"><span>{{ tech.skill }}</span><span class="badge">{{ tech.count }}</span></div>
+            }
+          </div>
+        </div>
       </div>
     } @else {
       <p>Loading dashboard...</p>

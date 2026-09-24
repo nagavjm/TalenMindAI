@@ -1,11 +1,72 @@
-<tma-nav-shell>
-  <div class="tma-page-container">
-    <h1>AI Chat Assistant</h1>
+<tma-nav-shell [showSidenav]="false">
+  <div class="kito-shell">
+    <aside class="kito-sidebar" [class.collapsed]="sidebarCollapsed()">
+      <div class="kito-sidebar-header">
+        @if (!sidebarCollapsed()) {
+          <span class="kito-sidebar-title">Chats</span>
+        }
+        <button mat-icon-button (click)="toggleSidebar()" aria-label="Toggle sidebar">
+          <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+        </button>
+      </div>
 
-    <mat-card class="tma-card chat-card">
-      <div class="messages">
+      <button class="kito-new-chat" (click)="newConversation()">
+        <mat-icon>add</mat-icon>
+        @if (!sidebarCollapsed()) {
+          <span>New chat</span>
+        }
+      </button>
+
+      @if (!sidebarCollapsed()) {
+        <div class="kito-search">
+          <mat-icon>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Search chats..."
+            [ngModel]="searchTerm()"
+            (ngModelChange)="searchTerm.set($event)"
+          />
+        </div>
+
+        <div class="kito-history">
+          @for (c of filteredConversations(); track c.id) {
+            <div class="kito-history-item" [class.active]="c.id === activeConversationId()" (click)="openConversation(c)">
+              <span class="kito-history-title">{{ c.title }}</span>
+              <div class="kito-history-actions">
+                <button mat-icon-button (click)="renameConversation(c, $event)" aria-label="Rename">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteConversation(c, $event)" aria-label="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="kito-sidebar-footer">
+          <a routerLink="/dashboard" class="kito-footer-link">
+            <mat-icon>dashboard</mat-icon><span>Dashboard</span>
+          </a>
+          <button class="kito-footer-link" (click)="logout()">
+            <mat-icon>logout</mat-icon><span>Log out</span>
+          </button>
+        </div>
+      }
+    </aside>
+
+    <div class="kito-chat">
+    @if (messages().length === 0) {
+      <div class="kito-welcome">
+        <div class="kito-logo"><mat-icon>auto_awesome</mat-icon></div>
+        <h1>Hi, I'm <span class="brand">TalentMind AI</span></h1>
+        <p class="kito-subtitle">Your resume intelligence assistant.</p>
+        <p class="kito-hint">Ask me to search candidates, summarize resumes, compare skills, or answer hiring questions.</p>
+      </div>
+    } @else {
+      <div class="kito-messages">
         @for (m of messages(); track $index) {
-          <div class="message" [class.user]="m.role === 'user'" [class.assistant]="m.role === 'assistant'">
+          <div class="kito-message" [class.user]="m.role === 'user'" [class.assistant]="m.role === 'assistant'">
             <p>{{ m.text }}</p>
             @if (m.role === 'assistant' && m.chatHistoryId) {
               <div class="feedback">
@@ -20,19 +81,23 @@
           </div>
         }
         @if (sending()) {
-          <p class="typing">Assistant is typing...</p>
+          <p class="kito-typing">Assistant is typing...</p>
         }
       </div>
+    }
 
-      <div class="chat-input">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Ask a question about candidates...</mat-label>
-          <input matInput [(ngModel)]="question" (keyup.enter)="send()" />
-        </mat-form-field>
-        <button mat-flat-button color="primary" [disabled]="sending()" (click)="send()">
-          <mat-icon>send</mat-icon>
-        </button>
-      </div>
-    </mat-card>
+    <div class="kito-input-bar">
+      <input
+        class="kito-input"
+        type="text"
+        placeholder="Ask TalentMind AI anything..."
+        [(ngModel)]="question"
+        (keyup.enter)="send()"
+      />
+      <button class="kito-send" [disabled]="sending()" (click)="send()" aria-label="Send">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+    </div>
   </div>
 </tma-nav-shell>

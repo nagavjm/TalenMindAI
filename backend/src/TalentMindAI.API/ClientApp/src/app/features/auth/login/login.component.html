@@ -1,28 +1,63 @@
-<div class="tma-auth-container">
-  <mat-card class="tma-card tma-auth-card">
-    <h1>TalentMind AI</h1>
-    <h2>Sign in</h2>
+<div class="tma-page">
+  <div class="bg-animate">
+    <div class="circle" style="width: 400px; height: 400px; top: -100px; left: -100px;"></div>
+    <div class="circle" style="width: 300px; height: 300px; bottom: -50px; right: -50px; animation-delay: -5s;"></div>
+  </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" />
-      </mat-form-field>
+  <div class="tma-container">
+    <div class="mascot-section">
+      <div class="glow-circle"></div>
+      <div class="mascot-container">
+        <svg class="robot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#00d2ff" stroke-width="2" stroke-dasharray="10 5" />
+          <rect x="60" y="70" width="80" height="60" rx="15" fill="#1a1a2e" stroke="#00d2ff" stroke-width="4" />
+          <circle cx="85" cy="95" r="8" fill="#00d2ff">
+            <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="115" cy="95" r="8" fill="#00d2ff">
+            <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite" />
+          </circle>
+          <path d="M80 115 Q100 125 120 115" stroke="#00d2ff" stroke-width="3" fill="none" stroke-linecap="round" />
+          <path d="M100 50 L100 70" stroke="#6a11cb" stroke-width="4" />
+          <circle cx="100" cy="45" r="5" fill="#6a11cb" />
+        </svg>
+      </div>
+      <h3>TALENTMIND AI</h3>
+      <p class="mascot-subtitle">AI-Powered Resume Intelligence</p>
+    </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" formControlName="password" />
-      </mat-form-field>
+    <div class="form-section">
+      <div class="form-toggle">
+        <a routerLink="/login" class="active">Login</a>
+        <a routerLink="/register">Register</a>
+      </div>
 
-      @if (errorMessage()) {
-        <p class="error">{{ errorMessage() }}</p>
-      }
+      <h2>Welcome Back!</h2>
+      <p class="desc">Please enter your credentials to access your neural-link.</p>
 
-      <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="form.invalid">
-        Login
-      </button>
-    </form>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="name@company.com" />
+        </div>
 
-    <p>Don't have an account? <a routerLink="/register">Register</a></p>
-  </mat-card>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" formControlName="password" placeholder="••••••••" />
+        </div>
+
+        @if (errorMessage()) {
+          <p class="error">{{ errorMessage() }}</p>
+        }
+
+        <button class="btn-submit" type="submit" [disabled]="form.invalid || submitting()">
+          {{ submitting() ? 'Initializing…' : 'Initialize Session' }}
+        </button>
+
+        @if (authConfig().authMode === 'Sso') {
+          <button type="button" class="btn-sso">Sign in with SSO</button>
+        }
+      </form>
+    </div>
+  </div>
 </div>

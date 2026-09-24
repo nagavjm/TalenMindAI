@@ -45,3 +45,20 @@ public class AiLanguageOptions
     public string Endpoint { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
 }
+
+public enum AuthMode
+{
+    Basic,
+    Sso
+}
+
+public class FeatureFlagsOptions
+{
+    public const string SectionName = "FeatureFlags";
+
+    /// <summary>
+    /// Selects the single active authentication mode for the app: "Basic" (username/password)
+    /// or "Sso" (implemented later). Only one mode is active at a time.
+    /// </summary>
+    public AuthMode AuthMode { get; set; } = AuthMode.Basic;
+}

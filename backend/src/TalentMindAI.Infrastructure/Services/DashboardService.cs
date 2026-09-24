@@ -19,12 +19,14 @@ public class DashboardService : IDashboardService
     {
         var totalResumes = await _dbContext.Resumes.CountAsync(ct);
 
-        var skillCounts = await _dbContext.Skills
+        var skillCounts = (await _dbContext.Skills
             .GroupBy(s => s.Name)
-            .Select(g => new SkillCountDto(g.Key, g.Count()))
-            .OrderByDescending(s => s.Count)
+            .Select(g => new { Skill = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
             .Take(10)
-            .ToListAsync(ct);
+            .ToListAsync(ct))
+            .Select(x => new SkillCountDto(x.Skill, x.Count))
+            .ToList();
 
         var analyses = await _dbContext.ResumeAnalyses.Select(a => a.YearsOfExperience).ToListAsync(ct);
         var buckets = new List<ExperienceBucketDto>

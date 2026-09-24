@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -25,6 +25,8 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './nav-shell.component.scss'
 })
 export class NavShellComponent {
+  @Input() showSidenav = true;
+
   darkMode = signal(false);
 
   constructor(public authService: AuthService, private router: Router) {}

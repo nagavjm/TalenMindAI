@@ -1,6 +1,7 @@
 using Azure;
-using Azure.AI.Inference;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Options;
+using OpenAI.Chat;
 using TalentMindAI.Application.Interfaces;
 using TalentMindAI.Infrastructure.Configuration;
 
@@ -15,21 +16,24 @@ public class AiFoundryService : IAiFoundryService
         _options = options.Value;
     }
 
-    public async Task<string> CompleteAsync(string systemPrompt, string userPrompt, CancellationToken ct = default)
+    public async Task<string> CompleteAsync(string systemPrompt, string userPrompt, bool jsonMode = false, CancellationToken ct = default)
     {
-        var client = new ChatCompletionsClient(new Uri(_options.Endpoint), new AzureKeyCredential(_options.ApiKey));
+        var azureClient = new AzureOpenAIClient(new Uri(_options.Endpoint), new AzureKeyCredential(_options.ApiKey));
+        var chatClient = azureClient.GetChatClient(_options.DeploymentName);
 
-        var requestOptions = new ChatCompletionsOptions
+        var messages = new ChatMessage[]
         {
-            Model = _options.DeploymentName,
-            Messages =
-            {
-                new ChatRequestSystemMessage(systemPrompt),
-                new ChatRequestUserMessage(userPrompt)
-            }
+            new SystemChatMessage(systemPrompt),
+            new UserChatMessage(userPrompt)
         };
 
-        var response = await client.CompleteAsync(requestOptions, ct);
-        return response.Value.Content ?? string.Empty;
+        var options = new ChatCompletionOptions();
+        if (jsonMode)
+        {
+            options.ResponseFormat = ChatResponseFormat.CreateJsonObjectFormat();
+        }
+
+        var response = await chatClient.CompleteChatAsync(messages, options, ct);
+        return response.Value.Content.Count > 0 ? response.Value.Content[0].Text : string.Empty;
     }
 }

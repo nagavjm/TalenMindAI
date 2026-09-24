@@ -88,8 +88,26 @@ public class ResumeService : IResumeService
         var content = resume.ExtractedText ?? string.Empty;
         var maskedContent = await _languageService.MaskPiiAsync(content, ct);
 
-        const string systemPrompt = "You are an expert technical recruiter. Analyze the resume and return JSON with summary, technicalSkills, certifications, yearsOfExperience, strengths, suggestedRoles.";
-        var rawResponse = await _aiFoundry.CompleteAsync(systemPrompt, maskedContent, ct);
+        const string systemPrompt = """
+            You are an expert technical recruiter. You will be given resume text, which may be messy,
+            partially OCR-extracted, or appear incomplete. Do NOT ask clarifying questions and do NOT
+            reply with any explanation, apology, or markdown code fences. Always respond with your best
+            effort analysis based on whatever text is provided, even if it looks short or truncated.
+
+            Respond with ONLY a single raw JSON object (no markdown, no commentary) in exactly this shape:
+            {
+              "summary": "string",
+              "technicalSkills": ["string"],
+              "certifications": ["string"],
+              "yearsOfExperience": 0,
+              "strengths": ["string"],
+              "suggestedRoles": ["string"]
+            }
+
+            If a field cannot be determined from the text, use an empty string, empty array, or 0 as
+            appropriate — never omit a field, never return non-JSON text.
+            """;
+        var rawResponse = await _aiFoundry.CompleteAsync(systemPrompt, maskedContent, jsonMode: true, ct);
 
         await _promptLog.LogAsync(resume.UserId, "Analysis", maskedContent, rawResponse, containedPii: content != maskedContent, failedSafety: false, injectionDetected: _responsibleAi.DetectPromptInjection(content), latencyMs: 0, ct);
 
@@ -100,6 +118,14 @@ public class ResumeService : IResumeService
         analysis.RawModelResponse = rawResponse;
         analysis.KeyPhrasesJson = JsonSerializer.Serialize(keyPhrases);
         analysis.NamedEntitiesJson = JsonSerializer.Serialize(entities);
+
+        var parsed = TryParseModelResponse(rawResponse);
+        analysis.CandidateSummary = parsed?.Summary ?? string.Empty;
+        analysis.TechnicalSkillsJson = JsonSerializer.Serialize(parsed?.TechnicalSkills ?? new());
+        analysis.CertificationsJson = JsonSerializer.Serialize(parsed?.Certifications ?? new());
+        analysis.YearsOfExperience = parsed?.YearsOfExperience ?? 0;
+        analysis.StrengthsJson = JsonSerializer.Serialize(parsed?.Strengths ?? new());
+        analysis.SuggestedRolesJson = JsonSerializer.Serialize(parsed?.SuggestedRoles ?? new());
 
         if (resume.Analysis is null)
         {
@@ -158,5 +184,71 @@ public class ResumeService : IResumeService
             .OrderByDescending(r => r.CreatedAt)
             .Select(r => new ResumeSummaryDto(r.Id, r.CandidateName, r.FileName, r.Status.ToString(), r.CreatedAt))
             .ToListAsync(ct);
+    }
+
+    private static ModelAnalysisResult? TryParseModelResponse(string rawResponse)
+    {
+        if (string.IsNullOrWhiteSpace(rawResponse))
+        {
+            return null;
+        }
+
+        var json = ExtractJson(rawResponse);
+        if (json is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<ModelAnalysisResult>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    private static string? ExtractJson(string text)
+    {
+        var trimmed = text.Trim();
+
+        // Strip markdown code fences (```json ... ``` or ``` ... ```)
+        if (trimmed.StartsWith("```"))
+        {
+            var firstNewline = trimmed.IndexOf('\n');
+            if (firstNewline >= 0)
+            {
+                trimmed = trimmed[(firstNewline + 1)..];
+            }
+            var closingFence = trimmed.LastIndexOf("```", StringComparison.Ordinal);
+            if (closingFence >= 0)
+            {
+                trimmed = trimmed[..closingFence];
+            }
+            trimmed = trimmed.Trim();
+        }
+
+        var start = trimmed.IndexOf('{');
+        var end = trimmed.LastIndexOf('}');
+        if (start < 0 || end < 0 || end <= start)
+        {
+            return null;
+        }
+
+        return trimmed[start..(end + 1)];
+    }
+
+    private sealed class ModelAnalysisResult
+    {
+        public string? Summary { get; set; }
+        public List<string>? TechnicalSkills { get; set; }
+        public List<string>? Certifications { get; set; }
+        public decimal? YearsOfExperience { get; set; }
+        public List<string>? Strengths { get; set; }
+        public List<string>? SuggestedRoles { get; set; }
     }
 }
