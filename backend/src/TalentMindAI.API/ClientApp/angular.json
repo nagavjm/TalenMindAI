@@ -41,6 +41,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": { "buildTarget": "talentmind-ai-client:build:production" },
             "development": { "buildTarget": "talentmind-ai-client:build:development" }
@@ -62,5 +65,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "d3903203-ca45-434a-b688-9d1af322c39f"
   }
 }

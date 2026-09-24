@@ -44,7 +44,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ChatHistory>(b =>
         {
-            b.HasOne(c => c.User).WithMany(u => u.ChatHistories).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Cascade);
+            b.HasOne(c => c.User).WithMany(u => u.ChatHistories).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
             b.HasOne(c => c.Resume).WithMany().HasForeignKey(c => c.ResumeId).OnDelete(DeleteBehavior.SetNull);
         });
 

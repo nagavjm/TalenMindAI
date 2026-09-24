@@ -22,8 +22,8 @@
       "name": "Frontend: ng serve",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/frontend/src",
+      "url": "http://localhost:5080",
+      "webRoot": "${workspaceFolder}/backend/src/TalentMindAI.API/ClientApp/src",
       "preLaunchTask": "frontend: ng serve"
     }
   ],

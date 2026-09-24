@@ -37,7 +37,7 @@
       "type": "shell",
       "command": "npm install",
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/backend/src/TalentMindAI.API/ClientApp"
       },
       "presentation": {
         "reveal": "silent",
@@ -50,7 +50,7 @@
       "type": "shell",
       "command": "npm start",
       "options": {
-        "cwd": "${workspaceFolder}/frontend"
+        "cwd": "${workspaceFolder}/backend/src/TalentMindAI.API/ClientApp"
       },
       "isBackground": true,
       "problemMatcher": {

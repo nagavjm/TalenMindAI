@@ -4,7 +4,9 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
 
-const TOKEN_KEY = 'tma_token';
+// The JWT itself lives only in a HttpOnly cookie set by the API (not accessible to JS).
+// We keep a small, non-sensitive copy of the user's profile in localStorage purely so the
+// UI can render the logged-in state without an extra round-trip; it is not used for auth.
 const USER_KEY = 'tma_user';
 
 @Injectable({ providedIn: 'root' })
@@ -15,25 +17,28 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, request).pipe(tap((res) => this.persist(res)));
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/register`, request, { withCredentials: true })
+      .pipe(tap((res) => this.persist(res)));
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, request).pipe(tap((res) => this.persist(res)));
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}/login`, request, { withCredentials: true })
+      .pipe(tap((res) => this.persist(res)));
   }
 
-  logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
-    this.currentUser.set(null);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/logout`, {}, { withCredentials: true }).pipe(
+      tap(() => {
+        localStorage.removeItem(USER_KEY);
+        this.currentUser.set(null);
+      })
+    );
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return !!this.currentUser();
   }
 
   isAdmin(): boolean {
@@ -41,7 +46,6 @@ export class AuthService {
   }
 
   private persist(res: AuthResponse): void {
-    localStorage.setItem(TOKEN_KEY, res.token);
     localStorage.setItem(USER_KEY, JSON.stringify(res));
     this.currentUser.set(res);
   }

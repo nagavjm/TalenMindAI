@@ -7,9 +7,9 @@ Logs/
 *.log
 
 # Angular / Node
-frontend/node_modules/
-frontend/dist/
-frontend/.angular/
+**/ClientApp/node_modules/
+**/ClientApp/dist/
+**/ClientApp/.angular/
 npm-debug.log*
 
 # IDE

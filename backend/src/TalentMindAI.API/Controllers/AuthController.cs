@@ -19,6 +19,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request, CancellationToken ct)
     {
         var result = await _authService.RegisterAsync(request, ct);
+        SetAuthCookie(result);
         return Ok(result);
     }
 
@@ -26,6 +27,25 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken ct)
     {
         var result = await _authService.LoginAsync(request, ct);
+        SetAuthCookie(result);
         return Ok(result);
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("tma_auth");
+        return Ok();
+    }
+
+    private void SetAuthCookie(AuthResponse result)
+    {
+        Response.Cookies.Append("tma_auth", result.Token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
+            Expires = result.ExpiresAt
+        });
     }
 }
