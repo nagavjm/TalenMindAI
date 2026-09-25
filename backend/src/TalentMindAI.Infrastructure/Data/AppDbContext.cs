@@ -15,6 +15,12 @@ public class AppDbContext : DbContext
     public DbSet<PromptLog> PromptLogs => Set<PromptLog>();
     public DbSet<ChatHistory> ChatHistories => Set<ChatHistory>();
 
+    // TalentMind NutriAI (Food module) - separate tables, isolated from Resume Assistant data.
+    public DbSet<FoodChatHistory> FoodChatHistories => Set<FoodChatHistory>();
+    public DbSet<FoodRecipe> FoodRecipes => Set<FoodRecipe>();
+    public DbSet<MealPlan> MealPlans => Set<MealPlan>();
+    public DbSet<NutritionAnalysis> NutritionAnalyses => Set<NutritionAnalysis>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(b =>
@@ -51,6 +57,29 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PromptLog>(b =>
         {
             b.HasOne(p => p.User).WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // ---------- TalentMind NutriAI (Food module) ----------
+        modelBuilder.Entity<FoodChatHistory>(b =>
+        {
+            b.HasOne(c => c.User).WithMany(u => u.FoodChatHistories).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<FoodRecipe>(b =>
+        {
+            b.HasOne(r => r.User).WithMany(u => u.FoodRecipes).HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
+            b.Property(r => r.Title).HasMaxLength(300);
+        });
+
+        modelBuilder.Entity<MealPlan>(b =>
+        {
+            b.HasOne(m => m.User).WithMany(u => u.MealPlans).HasForeignKey(m => m.UserId).OnDelete(DeleteBehavior.Cascade);
+            b.Property(m => m.Title).HasMaxLength(300);
+        });
+
+        modelBuilder.Entity<NutritionAnalysis>(b =>
+        {
+            b.HasOne(n => n.User).WithMany(u => u.NutritionAnalyses).HasForeignKey(n => n.UserId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

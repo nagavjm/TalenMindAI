@@ -45,6 +45,18 @@
   color: var(--tma-primary);
 }
 
+// TalentMind NutriAI (Food module) - distinct green/warm palette, isolated from other feature cards.
+.food-nav-card {
+  &:hover {
+    border-color: #2e8b57;
+  }
+}
+
+.food-nav-icon {
+  background: rgba(46, 139, 87, 0.12);
+  color: #2e8b57;
+}
+
 .feature-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

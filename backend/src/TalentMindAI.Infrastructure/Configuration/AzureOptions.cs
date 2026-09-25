@@ -46,6 +46,31 @@ public class AiLanguageOptions
     public string ApiKey { get; set; } = string.Empty;
 }
 
+/// <summary>
+/// Dedicated AI configuration for TalentMind NutriAI (Food module). Intentionally separate
+/// from <see cref="AiFoundryOptions"/> (used by the Resume Assistant) so the two assistants
+/// can use different endpoints/models/keys and evolve independently.
+/// </summary>
+public class FoodAIOptions
+{
+    public const string SectionName = "FoodAI";
+    public string Endpoint { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
+    public string DeploymentName { get; set; } = "food-ai-model";
+}
+
+/// <summary>
+/// Future extension point for a Food Knowledge Base (Azure AI Search index over
+/// nutrition/recipe PDFs). Not wired to a live index yet.
+/// </summary>
+public class FoodKnowledgeSearchOptions
+{
+    public const string SectionName = "FoodKnowledgeSearch";
+    public string Endpoint { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
+    public string IndexName { get; set; } = "food-knowledge-index";
+}
+
 public enum AuthMode
 {
     Basic,

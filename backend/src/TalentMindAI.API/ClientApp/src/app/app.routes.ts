@@ -41,5 +41,32 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/admin-analytics/admin-analytics.component').then((m) => m.AdminAnalyticsComponent)
   },
+  // TalentMind NutriAI (Food module) - isolated feature routes, separate from Resume Assistant.
+  {
+    path: 'food',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/food/food.component').then((m) => m.FoodComponent)
+  },
+  {
+    path: 'food/chat',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/food/food-chat/food-chat.component').then((m) => m.FoodChatComponent)
+  },
+  {
+    path: 'food/recipes',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/food/food-recipes/food-recipes.component').then((m) => m.FoodRecipesComponent)
+  },
+  {
+    path: 'food/nutrition',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/food/food-nutrition/food-nutrition.component').then((m) => m.FoodNutritionComponent)
+  },
+  {
+    path: 'food/meal-planner',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/food/food-meal-planner/food-meal-planner.component').then((m) => m.FoodMealPlannerComponent)
+  },
   { path: '**', redirectTo: 'login' }
 ];

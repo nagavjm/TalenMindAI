@@ -24,6 +24,10 @@ public static class DependencyInjection
         services.Configure<AiLanguageOptions>(configuration.GetSection(AiLanguageOptions.SectionName));
         services.Configure<FeatureFlagsOptions>(configuration.GetSection(FeatureFlagsOptions.SectionName));
 
+        // TalentMind NutriAI (Food module) - dedicated configuration, separate from Resume Assistant.
+        services.Configure<FoodAIOptions>(configuration.GetSection(FoodAIOptions.SectionName));
+        services.Configure<FoodKnowledgeSearchOptions>(configuration.GetSection(FoodKnowledgeSearchOptions.SectionName));
+
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IBlobStorageService, BlobStorageService>();
         services.AddScoped<IOcrService, OcrService>();
@@ -38,6 +42,14 @@ public static class DependencyInjection
         services.AddScoped<IChatService, ChatService>();
         services.AddScoped<IInterviewService, InterviewService>();
         services.AddScoped<IDashboardService, DashboardService>();
+
+        // TalentMind NutriAI (Food module) - dedicated services, isolated from Resume Assistant agents/models.
+        services.AddScoped<IFoodAiCompletionService, FoodAiCompletionService>();
+        services.AddScoped<IFoodKnowledgeRetriever, FoodKnowledgeRetriever>();
+        services.AddScoped<IFoodChatService, FoodChatService>();
+        services.AddScoped<IRecipeService, RecipeService>();
+        services.AddScoped<INutritionService, NutritionService>();
+        services.AddScoped<IMealPlannerService, MealPlannerService>();
 
         return services;
     }

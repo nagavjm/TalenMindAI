@@ -1,0 +1,32 @@
+<tma-nav-shell [showSidenav]="false">
+  <div class="tma-page-container food-theme">
+    <h1 class="food-heading">Welcome to <span class="highlight">TalentMind NutriAI</span></h1>
+    <p class="food-subtitle">Your personal nutrition &amp; recipe intelligence assistant.</p>
+
+    <div class="food-cards-grid">
+      <a class="food-card" routerLink="/food/chat">
+        <div class="food-icon"><mat-icon>restaurant_menu</mat-icon></div>
+        <h3 class="food-title">Nutrition Chat</h3>
+        <p class="food-desc">Ask questions about food, diet, and nutrition.</p>
+      </a>
+
+      <a class="food-card" routerLink="/food/recipes">
+        <div class="food-icon"><mat-icon>menu_book</mat-icon></div>
+        <h3 class="food-title">Recipes</h3>
+        <p class="food-desc">Generate and browse AI-crafted recipes.</p>
+      </a>
+
+      <a class="food-card" routerLink="/food/nutrition">
+        <div class="food-icon"><mat-icon>monitor_heart</mat-icon></div>
+        <h3 class="food-title">Nutrition Analysis</h3>
+        <p class="food-desc">Analyze the nutritional value of any meal.</p>
+      </a>
+
+      <a class="food-card" routerLink="/food/meal-planner">
+        <div class="food-icon"><mat-icon>event_note</mat-icon></div>
+        <h3 class="food-title">Meal Planner</h3>
+        <p class="food-desc">Build personalized multi-day meal plans.</p>
+      </a>
+    </div>
+  </div>
+</tma-nav-shell>

@@ -1,0 +1,28 @@
+<tma-nav-shell [showSidenav]="false">
+  <div class="tma-page-container food-theme">
+    <a routerLink="/food" class="back-link"><mat-icon>arrow_back</mat-icon><span>NutriAI Home</span></a>
+    <h1 class="food-page-heading">Meal Planner</h1>
+
+    <div class="food-generate-bar">
+      <input class="food-input" type="text" placeholder="Title, e.g. Weight Loss Week" [(ngModel)]="title" />
+      <input class="food-input small" type="date" [(ngModel)]="startDate" />
+      <input class="food-input small" type="date" [(ngModel)]="endDate" />
+      <input class="food-input small" type="text" placeholder="Dietary preference (optional)" [(ngModel)]="dietaryPreference" />
+      <button class="food-send" [disabled]="generating()" (click)="generate()">
+        <mat-icon>event_note</mat-icon>
+        <span>Generate</span>
+      </button>
+    </div>
+
+    <div class="food-list-grid">
+      @for (p of plans(); track p.id) {
+        <div class="food-list-card">
+          <h3>{{ p.title }} <span class="tag">{{ p.startDate | date:'mediumDate' }} - {{ p.endDate | date:'mediumDate' }}</span></h3>
+          <p class="food-list-body">{{ p.planJson }}</p>
+        </div>
+      } @empty {
+        <p>No meal plans yet. Generate your first plan above.</p>
+      }
+    </div>
+  </div>
+</tma-nav-shell>

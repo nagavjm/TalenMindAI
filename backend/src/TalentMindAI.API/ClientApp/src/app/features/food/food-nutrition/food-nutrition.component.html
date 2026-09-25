@@ -1,0 +1,30 @@
+<tma-nav-shell [showSidenav]="false">
+  <div class="tma-page-container food-theme">
+    <a routerLink="/food" class="back-link"><mat-icon>arrow_back</mat-icon><span>NutriAI Home</span></a>
+    <h1 class="food-page-heading">Nutrition Analysis</h1>
+
+    <div class="food-generate-bar">
+      <input class="food-input" type="text" placeholder="Describe a meal, e.g. Grilled chicken with rice and broccoli" [(ngModel)]="foodDescription" (keyup.enter)="analyze()" />
+      <button class="food-send" [disabled]="analyzing()" (click)="analyze()">
+        <mat-icon>monitor_heart</mat-icon>
+        <span>Analyze</span>
+      </button>
+    </div>
+
+    <div class="food-list-grid">
+      @for (n of history(); track n.id) {
+        <div class="food-list-card">
+          <h3>{{ n.foodDescription }}</h3>
+          <div class="food-macros">
+            <span>Calories: {{ n.calories }}</span>
+            <span>Protein: {{ n.proteinGrams }}g</span>
+            <span>Carbs: {{ n.carbsGrams }}g</span>
+            <span>Fat: {{ n.fatGrams }}g</span>
+          </div>
+        </div>
+      } @empty {
+        <p>No nutrition analyses yet. Analyze your first meal above.</p>
+      }
+    </div>
+  </div>
+</tma-nav-shell>

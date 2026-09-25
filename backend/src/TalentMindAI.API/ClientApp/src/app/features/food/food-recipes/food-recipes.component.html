@@ -1,0 +1,31 @@
+<tma-nav-shell [showSidenav]="false">
+  <div class="tma-page-container food-theme">
+    <a routerLink="/food" class="back-link"><mat-icon>arrow_back</mat-icon><span>NutriAI Home</span></a>
+    <h1 class="food-page-heading">Recipes</h1>
+
+    <div class="food-generate-bar">
+      <input class="food-input" type="text" placeholder="e.g. High-protein vegetarian dinner" [(ngModel)]="prompt" />
+      <input class="food-input small" type="text" placeholder="Dietary preference (optional)" [(ngModel)]="dietaryPreference" />
+      <button class="food-send" [disabled]="generating()" (click)="generate()">
+        <mat-icon>auto_awesome</mat-icon>
+        <span>Generate</span>
+      </button>
+    </div>
+
+    <div class="food-list-grid">
+      @for (r of recipes(); track r.id) {
+        <div class="food-list-card">
+          <h3>{{ r.title }}</h3>
+          <div class="food-list-tags">
+            @for (ing of r.ingredients; track ing) {
+              <span class="tag">{{ ing }}</span>
+            }
+          </div>
+          <p class="food-list-body">{{ r.instructions }}</p>
+        </div>
+      } @empty {
+        <p>No recipes yet. Generate your first one above.</p>
+      }
+    </div>
+  </div>
+</tma-nav-shell>
