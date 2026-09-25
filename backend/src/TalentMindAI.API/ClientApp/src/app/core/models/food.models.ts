@@ -24,7 +24,10 @@ export interface RecipeListResponse {
 
 export interface RecipeGenerateRequest {
   prompt: string;
-  dietaryPreference?: string | null;
+  ingredients?: string[] | null;
+  cuisine?: string | null;
+  dietaryTags?: string[] | null;
+  servings?: number | null;
 }
 
 export interface NutritionAnalysisDto {

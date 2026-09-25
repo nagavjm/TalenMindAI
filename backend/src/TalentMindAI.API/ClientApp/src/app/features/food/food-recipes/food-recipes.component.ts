@@ -31,8 +31,11 @@ export class FoodRecipesComponent implements OnInit {
     const prompt = this.prompt.trim();
     if (!prompt) return;
     this.generating.set(true);
+    const dietaryTags = this.dietaryPreference
+      ? this.dietaryPreference.split(',').map((t) => t.trim()).filter(Boolean)
+      : null;
     this.foodService
-      .generateRecipe({ prompt, dietaryPreference: this.dietaryPreference || null })
+      .generateRecipe({ prompt, dietaryTags })
       .subscribe({
         next: (recipe) => {
           this.recipes.update((r) => [recipe, ...r]);
