@@ -14,7 +14,10 @@
       <div class="food-messages">
         @for (m of messages(); track $index) {
           <div class="food-message" [class.user]="m.role === 'user'" [class.assistant]="m.role === 'assistant'">
-            <p>{{ m.text }}</p>
+            <div class="food-message-content" [innerHTML]="m.html"></div>
+            @if (m.role === 'assistant' && m.imageUrl) {
+              <img class="food-message-image" [src]="m.imageUrl" alt="AI-generated food image" />
+            }
             @if (m.role === 'assistant' && m.chatHistoryId) {
               <div class="feedback">
                 <button mat-icon-button (click)="feedback(m.chatHistoryId, true)" aria-label="Helpful">

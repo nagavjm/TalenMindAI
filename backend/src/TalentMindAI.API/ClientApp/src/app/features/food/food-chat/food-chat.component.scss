@@ -62,6 +62,42 @@
 
   p { margin: 0; }
 
+  .food-message-content {
+    p { margin: 0 0 8px; }
+    p:last-child { margin-bottom: 0; }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin: 12px 0 6px;
+      font-weight: 600;
+      &:first-child { margin-top: 0; }
+    }
+
+    ul, ol {
+      margin: 4px 0 8px;
+      padding-left: 22px;
+    }
+
+    li { margin-bottom: 4px; }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    code {
+      background: rgba(0, 0, 0, 0.08);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+  }
+
+  .food-message-image {
+    display: block;
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+
   &.user {
     align-self: flex-end;
     background: #2e8b57;

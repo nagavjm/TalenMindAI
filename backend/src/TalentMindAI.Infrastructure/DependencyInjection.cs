@@ -46,6 +46,7 @@ public static class DependencyInjection
 
         // TalentMind NutriAI (Food module) - dedicated services, isolated from Resume Assistant agents/models.
         services.AddScoped<IFoodAiCompletionService, FoodAiCompletionService>();
+        services.AddScoped<IFoodImageService, FoodImageService>();
         services.AddScoped<IFoodKnowledgeRetriever, FoodKnowledgeRetriever>();
         services.AddScoped<IFoodResponsibleAiService, FoodResponsibleAiService>();
         services.AddScoped<IFoodChatService, FoodChatService>();

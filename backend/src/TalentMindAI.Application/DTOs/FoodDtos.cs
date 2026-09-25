@@ -3,7 +3,7 @@ namespace TalentMindAI.Application.DTOs;
 // ---------- Food Chat (TalentMind NutriAI) ----------
 public record FoodChatQueryRequest(string Question);
 
-public record FoodChatQueryResponse(Guid ChatHistoryId, string Answer, List<string> SourceChunks);
+public record FoodChatQueryResponse(Guid ChatHistoryId, string Answer, List<string> SourceChunks, string? ImageUrl = null);
 
 public record FoodChatFeedbackRequest(Guid ChatHistoryId, bool IsHelpful);
 

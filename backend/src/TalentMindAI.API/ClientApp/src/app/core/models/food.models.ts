@@ -8,6 +8,7 @@ export interface FoodChatQueryResponse {
   chatHistoryId: string;
   answer: string;
   sourceChunks: string[];
+  imageUrl?: string | null;
 }
 
 export interface RecipeDto {

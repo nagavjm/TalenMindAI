@@ -57,6 +57,13 @@ public class FoodAIOptions
     public string Endpoint { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
     public string DeploymentName { get; set; } = "food-ai-model";
+
+    /// <summary>
+    /// Image-generation deployment (e.g. a DALL-E 3 deployment) on the same Azure OpenAI
+    /// resource as the Food chat/text deployment above. Used only by the Food chat's
+    /// "generate me a picture of ..." intent - never shared with the Resume Assistant.
+    /// </summary>
+    public string ImageDeploymentName { get; set; } = "food-image-model";
 }
 
 /// <summary>

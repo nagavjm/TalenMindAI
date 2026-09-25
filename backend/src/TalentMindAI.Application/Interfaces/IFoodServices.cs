@@ -13,6 +13,16 @@ public interface IFoodAiCompletionService
 }
 
 /// <summary>
+/// Dedicated image-generation abstraction for TalentMind NutriAI (Food module), backed by a
+/// DALL-E deployment on the Food module's own Azure OpenAI resource (<see cref="TalentMindAI.Infrastructure.Configuration.FoodAIOptions"/>).
+/// Fully isolated from the Resume Assistant.
+/// </summary>
+public interface IFoodImageService
+{
+    Task<string> GenerateImageAsync(string prompt, CancellationToken ct = default);
+}
+
+/// <summary>
 /// Extension point for future Retrieval-Augmented Generation over a Food Knowledge Base
 /// (nutrition PDFs, recipe documents, Azure AI Search index, etc). The default implementation
 /// is a no-op until a Food knowledge index is provisioned.
