@@ -71,6 +71,21 @@ public class FoodKnowledgeSearchOptions
     public string IndexName { get; set; } = "food-knowledge-index";
 }
 
+/// <summary>
+/// Dedicated Azure AI Content Safety configuration for TalentMind NutriAI (Food module).
+/// Powers Prompt Shields (jailbreak/injection detection) and Content Safety (harmful content
+/// moderation) for the Food module only - completely separate from the Resume Assistant's
+/// (regex-based) <see cref="TalentMindAI.Application.Interfaces.IResponsibleAiService"/>.
+/// If Endpoint/ApiKey are left as placeholders, checks are skipped gracefully (fail-open)
+/// until the resource is provisioned.
+/// </summary>
+public class FoodContentSafetyOptions
+{
+    public const string SectionName = "FoodContentSafety";
+    public string Endpoint { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
+}
+
 public enum AuthMode
 {
     Basic,

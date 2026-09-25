@@ -27,6 +27,7 @@ public static class DependencyInjection
         // TalentMind NutriAI (Food module) - dedicated configuration, separate from Resume Assistant.
         services.Configure<FoodAIOptions>(configuration.GetSection(FoodAIOptions.SectionName));
         services.Configure<FoodKnowledgeSearchOptions>(configuration.GetSection(FoodKnowledgeSearchOptions.SectionName));
+        services.Configure<FoodContentSafetyOptions>(configuration.GetSection(FoodContentSafetyOptions.SectionName));
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IBlobStorageService, BlobStorageService>();
@@ -46,6 +47,7 @@ public static class DependencyInjection
         // TalentMind NutriAI (Food module) - dedicated services, isolated from Resume Assistant agents/models.
         services.AddScoped<IFoodAiCompletionService, FoodAiCompletionService>();
         services.AddScoped<IFoodKnowledgeRetriever, FoodKnowledgeRetriever>();
+        services.AddScoped<IFoodResponsibleAiService, FoodResponsibleAiService>();
         services.AddScoped<IFoodChatService, FoodChatService>();
         services.AddScoped<IRecipeService, RecipeService>();
         services.AddScoped<INutritionService, NutritionService>();

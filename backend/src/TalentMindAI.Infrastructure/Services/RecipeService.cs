@@ -11,21 +11,38 @@ public class RecipeService : IRecipeService
 {
     private readonly AppDbContext _dbContext;
     private readonly IFoodAiCompletionService _foodAi;
+    private readonly IFoodResponsibleAiService _responsibleAi;
     private readonly IPromptLogService _promptLog;
 
-    public RecipeService(AppDbContext dbContext, IFoodAiCompletionService foodAi, IPromptLogService promptLog)
+    public RecipeService(AppDbContext dbContext, IFoodAiCompletionService foodAi, IFoodResponsibleAiService responsibleAi, IPromptLogService promptLog)
     {
         _dbContext = dbContext;
         _foodAi = foodAi;
+        _responsibleAi = responsibleAi;
         _promptLog = promptLog;
     }
 
     public async Task<RecipeDto> GenerateAsync(Guid userId, RecipeGenerateRequest request, CancellationToken ct = default)
     {
+        var inputCheck = await _responsibleAi.ValidateUserInputAsync(request.Prompt, ct);
+        if (!inputCheck.IsSafe)
+        {
+            await _promptLog.LogAsync(userId, "RecipeGenerate", request.Prompt, string.Empty, containedPii: false, failedSafety: true, injectionDetected: inputCheck.InjectionDetected, latencyMs: 0, ct);
+            throw new InvalidOperationException(inputCheck.Reason ?? "Potential prompt injection or unsafe content detected in the request.");
+        }
+
         const string systemPrompt = "You are a recipe-writing assistant for TalentMind NutriAI. Given a prompt, ingredients, cuisine and dietary tags, respond ONLY with a JSON object with keys: title, description, ingredients (string array), instructions, caloriesPerServing (number or null), prepTimeMinutes (number).";
         var userPrompt = $"Prompt: {request.Prompt}\nIngredients: {string.Join(", ", request.Ingredients ?? new List<string>())}\nCuisine: {request.Cuisine}\nDietary tags: {string.Join(", ", request.DietaryTags ?? new List<string>())}\nServings: {request.Servings ?? 1}";
 
         var raw = await _foodAi.CompleteAsync(systemPrompt, userPrompt, jsonMode: true, ct);
+
+        var outputCheck = await _responsibleAi.ValidateAiOutputAsync(raw, ct);
+        if (!outputCheck.IsSafe)
+        {
+            await _promptLog.LogAsync(userId, "RecipeGenerate", userPrompt, raw, containedPii: false, failedSafety: true, injectionDetected: false, latencyMs: 0, ct);
+            throw new InvalidOperationException(outputCheck.Reason ?? "The generated recipe content was flagged as unsafe. Please try a different prompt.");
+        }
+
         await _promptLog.LogAsync(userId, "RecipeGenerate", userPrompt, raw, containedPii: false, failedSafety: false, injectionDetected: false, latencyMs: 0, ct);
 
         var generated = ParseGeneratedRecipe(raw, request);

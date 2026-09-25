@@ -33,6 +33,24 @@ public interface IFoodAgent
     Task<string> HandleAsync(string input, CancellationToken ct = default);
 }
 
+/// <summary>
+/// Result of a Food module safety check (Prompt Shields and/or Content Safety).
+/// </summary>
+public record FoodSafetyCheckResult(bool IsSafe, bool InjectionDetected, string? Reason);
+
+/// <summary>
+/// Dedicated Responsible AI service for TalentMind NutriAI (Food module) backed by Azure AI
+/// Content Safety (Prompt Shields for injection/jailbreak detection, Content Safety for harmful
+/// content moderation). Fully separate from the Resume Assistant's <see cref="IResponsibleAiService"/>.
+/// Applied to both user input (before calling the AI) and AI-generated output (before it is
+/// persisted/returned) across chat, recipes, nutrition, and meal planning.
+/// </summary>
+public interface IFoodResponsibleAiService
+{
+    Task<FoodSafetyCheckResult> ValidateUserInputAsync(string text, CancellationToken ct = default);
+    Task<FoodSafetyCheckResult> ValidateAiOutputAsync(string text, CancellationToken ct = default);
+}
+
 public interface IFoodChatService
 {
     Task<FoodChatQueryResponse> QueryAsync(Guid userId, FoodChatQueryRequest request, CancellationToken ct = default);

@@ -11,21 +11,38 @@ public class NutritionService : INutritionService
 {
     private readonly AppDbContext _dbContext;
     private readonly IFoodAiCompletionService _foodAi;
+    private readonly IFoodResponsibleAiService _responsibleAi;
     private readonly IPromptLogService _promptLog;
 
-    public NutritionService(AppDbContext dbContext, IFoodAiCompletionService foodAi, IPromptLogService promptLog)
+    public NutritionService(AppDbContext dbContext, IFoodAiCompletionService foodAi, IFoodResponsibleAiService responsibleAi, IPromptLogService promptLog)
     {
         _dbContext = dbContext;
         _foodAi = foodAi;
+        _responsibleAi = responsibleAi;
         _promptLog = promptLog;
     }
 
     public async Task<NutritionAnalysisDto> AnalyzeAsync(Guid userId, NutritionAnalyzeRequest request, CancellationToken ct = default)
     {
+        var inputCheck = await _responsibleAi.ValidateUserInputAsync(request.FoodDescription, ct);
+        if (!inputCheck.IsSafe)
+        {
+            await _promptLog.LogAsync(userId, "NutritionAnalyze", request.FoodDescription, string.Empty, containedPii: false, failedSafety: true, injectionDetected: inputCheck.InjectionDetected, latencyMs: 0, ct);
+            throw new InvalidOperationException(inputCheck.Reason ?? "Potential prompt injection or unsafe content detected in the request.");
+        }
+
         const string systemPrompt = "You are a nutrition analysis assistant for TalentMind NutriAI. Respond ONLY with a JSON object with keys: calories, proteinGrams, carbsGrams, fatGrams (all numbers, estimate if needed), and summary (string). This is an estimate, not medical advice.";
         var userPrompt = $"Food description: {request.FoodDescription}";
 
         var raw = await _foodAi.CompleteAsync(systemPrompt, userPrompt, jsonMode: true, ct);
+
+        var outputCheck = await _responsibleAi.ValidateAiOutputAsync(raw, ct);
+        if (!outputCheck.IsSafe)
+        {
+            await _promptLog.LogAsync(userId, "NutritionAnalyze", userPrompt, raw, containedPii: false, failedSafety: true, injectionDetected: false, latencyMs: 0, ct);
+            throw new InvalidOperationException(outputCheck.Reason ?? "The generated nutrition analysis was flagged as unsafe. Please try a different description.");
+        }
+
         await _promptLog.LogAsync(userId, "NutritionAnalyze", userPrompt, raw, containedPii: false, failedSafety: false, injectionDetected: false, latencyMs: 0, ct);
 
         var (calories, protein, carbs, fat) = ParseMacros(raw);

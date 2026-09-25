@@ -17,14 +17,14 @@ public class FoodChatService : IFoodChatService
     private readonly AppDbContext _dbContext;
     private readonly IFoodKnowledgeRetriever _knowledgeRetriever;
     private readonly IFoodAiCompletionService _foodAi;
-    private readonly IResponsibleAiService _responsibleAi;
+    private readonly IFoodResponsibleAiService _responsibleAi;
     private readonly IPromptLogService _promptLog;
 
     public FoodChatService(
         AppDbContext dbContext,
         IFoodKnowledgeRetriever knowledgeRetriever,
         IFoodAiCompletionService foodAi,
-        IResponsibleAiService responsibleAi,
+        IFoodResponsibleAiService responsibleAi,
         IPromptLogService promptLog)
     {
         _dbContext = dbContext;
@@ -36,9 +36,11 @@ public class FoodChatService : IFoodChatService
 
     public async Task<FoodChatQueryResponse> QueryAsync(Guid userId, FoodChatQueryRequest request, CancellationToken ct = default)
     {
-        if (_responsibleAi.DetectPromptInjection(request.Question))
+        var inputCheck = await _responsibleAi.ValidateUserInputAsync(request.Question, ct);
+        if (!inputCheck.IsSafe)
         {
-            throw new InvalidOperationException("Potential prompt injection detected in the request.");
+            await _promptLog.LogAsync(userId, "FoodChat", request.Question, string.Empty, containedPii: false, failedSafety: true, injectionDetected: inputCheck.InjectionDetected, latencyMs: 0, ct);
+            throw new InvalidOperationException(inputCheck.Reason ?? "Potential prompt injection or unsafe content detected in the request.");
         }
 
         var chunks = await _knowledgeRetriever.SearchRelevantChunksAsync(request.Question, 5, ct);
@@ -49,7 +51,16 @@ public class FoodChatService : IFoodChatService
 
         var answer = await _foodAi.CompleteAsync(systemPrompt, userPrompt, jsonMode: false, ct);
 
-        await _promptLog.LogAsync(userId, "FoodChat", request.Question, answer, containedPii: false, failedSafety: false, injectionDetected: false, latencyMs: 0, ct);
+        var outputCheck = await _responsibleAi.ValidateAiOutputAsync(answer, ct);
+        if (!outputCheck.IsSafe)
+        {
+            await _promptLog.LogAsync(userId, "FoodChat", request.Question, answer, containedPii: false, failedSafety: true, injectionDetected: false, latencyMs: 0, ct);
+            answer = "Sorry, I can't provide that response. Please rephrase your question.";
+        }
+        else
+        {
+            await _promptLog.LogAsync(userId, "FoodChat", request.Question, answer, containedPii: false, failedSafety: false, injectionDetected: false, latencyMs: 0, ct);
+        }
 
         var history = new FoodChatHistory
         {
