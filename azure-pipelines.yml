@@ -57,3 +57,11 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
   displayName: 'Publish artifact'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'AzureServiceConnection'
+    appType: 'webApp'
+    appName: 'talentmindai-app'
+    package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+  displayName: 'Deploy to Azure App Service'
