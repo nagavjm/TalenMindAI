@@ -8,11 +8,20 @@ using TalentMindAI.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// On Azure App Service (Windows), the "Application Logging (Filesystem)" / Log Stream
+// feature tails files under %HOME%\LogFiles. Point the file sink there when running in
+// Azure so Log Stream can display application logs; fall back to a local "Logs" folder
+// for local development.
+var azureHomePath = Environment.GetEnvironmentVariable("HOME");
+var logFilePath = string.IsNullOrEmpty(azureHomePath)
+    ? "Logs/talentmindai-.log"
+    : Path.Combine(azureHomePath, "LogFiles", "Application", "talentmindai-.log");
+
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
     .WriteTo.Console()
-    .WriteTo.File("Logs/talentmindai-.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day, shared: true)
     .CreateLogger();
 builder.Host.UseSerilog();
 
